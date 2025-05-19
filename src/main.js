@@ -1,17 +1,23 @@
-import { render } from './render.js';
-import TripMainInfoView from './view/trip-main-info-view.js';
+import MainInfoView from './view/main-info-view.js';
 import FilterView from './view/filter-view.js';
-import SortView from './view/sort-view.js';
-import ListEventsPresenter from './presenter/trip-events-presenter.js';
+import PointsPresenter from './presenter/points-presenter.js';
+import PointsModel from './model/points-model.js';
 
-const siteHeaderElement = document.querySelector('.page-header');
-const tripMainElement = siteHeaderElement.querySelector('.trip-main');
-const filterElelment = siteHeaderElement.querySelector('.trip-controls__filters');
-const tripEventsElement = document.querySelector('.trip-events');
-const listPresenter = new ListEventsPresenter();
+import { render } from './render.js';
 
-render(new TripMainInfoView(), tripMainElement, 'afterbegin');
-render(new FilterView(), filterElelment);
-render(new SortView(), tripEventsElement);
+const siteBodyElement = document.querySelector('.page-body');
+const siteHeaderElement = siteBodyElement.querySelector('.page-header');
+const siteHeaderInfoElement = siteHeaderElement.querySelector('.trip-main');
+const siteFilterElement = siteHeaderInfoElement.querySelector('.trip-controls__filters');
+const siteMainElement = siteBodyElement.querySelector('.trip-events');
 
-listPresenter.init(tripEventsElement);
+const pointsPresenter = new PointsPresenter();
+const pointsModel = new PointsModel(); //создаем экземпляр модели
+
+render(new MainInfoView(), siteHeaderInfoElement, 'afterbegin');
+render(new FilterView(), siteFilterElement);
+
+pointsPresenter.init(siteMainElement, pointsModel); //передаем презентеру контейнер для отрисовки данных и модель
+
+
+import './mock/point.js';
