@@ -3,7 +3,7 @@ import FilterView from './view/filter-view.js';
 import PointsPresenter from './presenter/points-presenter.js';
 import PointsModel from './model/points-model.js';
 
-import { render } from './render.js';
+import { render } from './framework/render.js';
 
 const siteBodyElement = document.querySelector('.page-body');
 const siteHeaderElement = siteBodyElement.querySelector('.page-header');

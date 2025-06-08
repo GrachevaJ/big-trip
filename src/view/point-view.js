@@ -1,4 +1,4 @@
-import { createElement } from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import { humanizeDate, humanizeDatetime } from '../utils.js';
 import { generateOffersByType } from '../mock/offers.js';
 
@@ -76,28 +76,16 @@ const createPointTmplate = (point) => {
   );
 };
 
-export default class PointView {
+export default class PointView extends AbstractView {
   #point = null;
-  #element = null;
 
   constructor(point) {
+    super();
     this.#point = point;
   }
 
   get template() {
     return createPointTmplate(this.#point);
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }
 

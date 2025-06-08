@@ -4,7 +4,7 @@ import SortView from '../view/sort-view.js';
 import EditPointView from '../view/edit-point-view.js';
 import NoPointView from '../view/no-point-view.js';
 
-import { render } from '../render.js';
+import { render } from '../framework/render.js';
 
 export default class PointsPresenter {
   #container = null;
