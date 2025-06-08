@@ -3,7 +3,7 @@ import { humanizeDateWithYear } from '../utils.js';
 import { generateOffersByType } from '../mock/offers.js';
 import { types, destinationNames } from '../mock/const.js';
 
-const createNewPointTemplate = (point) => {
+const createEditPointTemplate = (point) => {
   const { basePrice, dateFrom, dateTo, destination, offers, type} = point;
   // const checkFavorite = isFavorite
   //   ? 'event__favorite-btn--active'
@@ -22,9 +22,9 @@ const createNewPointTemplate = (point) => {
     return `<div class="event__available-offers">
     ${pointTypeOffer.offers.map((offer) => {
 
-      const checked = offers.includes(offer.id) ? 'checked' : '';
+    const checked = offers.includes(offer.id) ? 'checked' : '';
 
-      return `<div class="event__offer-selector">
+    return `<div class="event__offer-selector">
                         <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.title}-1" type="checkbox" name="event-offer-${offer.title}" ${checked}>
                         <label class="event__offer-label" for="event-offer-${offer.title}-1">
                           <span class="event__offer-title">${offer.title}</span>
@@ -37,8 +37,8 @@ const createNewPointTemplate = (point) => {
 
   };
 
-  const pictures = destination.pictures;
-  const createPicturesList = () => `${pictures.map((picture) => `<img class="event__photo" src="${picture.src}" alt="Event photo">`)}`;
+  // const pictures = destination.pictures;
+  // const createPicturesList = () => `${pictures.map((picture) => `<img class="event__photo" src="${picture.src}" alt="Event photo">`)}`;
 
   return `<li class="trip-events__item">
               <form class="event event--edit" action="#" method="post">
@@ -98,18 +98,14 @@ const createNewPointTemplate = (point) => {
                     <h3 class="event__section-title  event__section-title--destination">Destination</h3>
                     <p class="event__destination-description">${destination.description}</p>
 
-                    <div class="event__photos-container">
-                      <div class="event__photos-tape">
-                        ${createPicturesList()}
-                      </div>
-                    </div>
+
                   </section>
                 </section>
               </form>
             </li>`;
 };
 
-export default class NewPointView {
+export default class EditPointView {
   #element = null;
   #point = null;
 
@@ -118,7 +114,7 @@ export default class NewPointView {
   }
 
   get template() {
-    return createNewPointTemplate(this.#point);
+    return createEditPointTemplate(this.#point);
   }
 
   get element() {
