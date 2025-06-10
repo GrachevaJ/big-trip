@@ -4,7 +4,7 @@ import SortView from '../view/sort-view.js';
 import EditPointView from '../view/edit-point-view.js';
 import NoPointView from '../view/no-point-view.js';
 
-import { render } from '../framework/render.js';
+import { render, replace } from '../framework/render.js';
 
 export default class PointsPresenter {
   #container = null;
@@ -36,11 +36,11 @@ export default class PointsPresenter {
     const editPointComponent = new EditPointView(point);
 
     const replacePointToForm = () => {
-      this.#pointsListComponent.element.replaceChild(editPointComponent.element, pointComponent.element);
+      replace(editPointComponent, pointComponent);
     };
 
     const replaceFormToPoint = () => {
-      this.#pointsListComponent.element.replaceChild(pointComponent.element, editPointComponent.element);
+      replace(pointComponent, editPointComponent);
     };
 
     const onEscKeyDown = (evt) => {

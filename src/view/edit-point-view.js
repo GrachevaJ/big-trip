@@ -1,5 +1,5 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import { humanizeDateWithYear } from '../utils.js';
+import { humanizeDateWithYear } from '../utils/date.js';
 import { generateOffersByType } from '../mock/offers.js';
 import { types, destinationNames } from '../mock/const.js';
 
