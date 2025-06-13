@@ -15,11 +15,19 @@ export default class PointsPresenter {
 
   #points = [];
 
-  init = (container, pointsModel) => {
+  constructor(container, pointsModel) {
     this.#container = container;
     this.#pointsModel = pointsModel;
+  }
+
+  init = () => {
     this.#points = [...this.#pointsModel.points];
 
+    this.#renderPointsList();
+  };
+
+
+  #renderPointsList = () => {
     if (this.#points.length === 0) {
       render(new NoPointView(), this.#container);
     } else {
