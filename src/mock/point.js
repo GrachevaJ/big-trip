@@ -8,11 +8,10 @@ const generatePictures = () => ({
 });
 
 
-
 export const generatePoint = () => ({
   basePrice: getRandomInteger(200, 3000),
-  dateFrom: '2019-07-10T22:55:56.845Z',
-  dateTo: '2019-07-11T11:22:13.375Z',
+  dateFrom: '2019-07-11T12:35:56.845Z',
+  dateTo: '2019-07-11T22:55:13.845Z',
   destination: {
     description: getRandomValue(description),
     name: getRandomValue(destinationNames),

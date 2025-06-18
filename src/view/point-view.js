@@ -1,5 +1,5 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import { humanizeDate, humanizeDatetime } from '../utils/date.js';
+import { humanizeDate, humanizeDatetime, durationTravel } from '../utils/date.js';
 import { generateOffersByType } from '../mock/offers.js';
 
 const createPointTmplate = (point) => {
@@ -22,25 +22,6 @@ const createPointTmplate = (point) => {
 
   };
 
-  const getDifferentDate = () => {
-    const end = new Date(dateTo);
-    const start = new Date(dateFrom);
-
-    const different = end - start;
-    const hours = Math.floor((different % 86400000) / 3600000);
-    const minutes = Math.round(((different % 86400000) / 3600000) / 60000);
-
-    if (hours === 0) {
-      return `${minutes}M`;
-    }
-    else if (minutes === 0){
-      return `${hours}H`;
-    }
-    else {
-      return `${hours}H ${minutes}M`;
-    }
-  };
-
   return (
     `<li class="trip-events__item">
               <div class="event">
@@ -55,7 +36,7 @@ const createPointTmplate = (point) => {
                     &mdash;
                     <time class="event__end-time" datetime="${dateTo}">${humanizeDatetime(dateTo)}</time>
                   </p>
-                  <p class="event__duration">${getDifferentDate()}</p>
+                  <p class="event__duration">${durationTravel(dateTo, dateFrom)}</p>
                 </div>
                 <p class="event__price">
                   &euro;&nbsp;<span class="event__price-value">${basePrice}</span>
