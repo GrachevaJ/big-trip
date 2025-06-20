@@ -1,6 +1,6 @@
 import { getRandomInteger, getRandomValue } from '../utils/common.js';
 import { types, picturesSrc, description, destinationNames } from './const.js';
-
+import {nanoid} from 'nanoid';
 
 const generatePictures = () => ({
   src: getRandomValue(picturesSrc),
@@ -9,6 +9,7 @@ const generatePictures = () => ({
 
 
 export const generatePoint = () => ({
+  id: nanoid(),
   basePrice: getRandomInteger(200, 3000),
   dateFrom: '2019-07-11T12:35:56.845Z',
   dateTo: '2019-07-11T22:55:13.845Z',

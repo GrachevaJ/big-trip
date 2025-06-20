@@ -14,6 +14,7 @@ export default class PointsPresenter {
   #noPointsComponent = new NoPointView();
 
   #points = [];
+  #pointPresenter = new Map();
 
   constructor(container, pointsModel) {
     this.#container = container;
@@ -52,5 +53,11 @@ export default class PointsPresenter {
   #renderPoint = (point) => {
     const pointPresenter = new PointPresenter(this.#pointsListComponent.element);
     pointPresenter.init(point);
+    this.#pointPresenter.set(point.id, pointPresenter);
+  };
+
+  #clearPointsList = () => {
+    this.#pointPresenter.forEach((presenter) => presenter.destroy());
+    this.#pointPresenter.clear();
   };
 }
