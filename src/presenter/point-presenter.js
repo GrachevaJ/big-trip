@@ -1,4 +1,4 @@
-import { render, replace } from '../framework/render.js';
+import { render, replace, remove } from '../framework/render.js';
 import PointView from '../view/point-view.js';
 import EditPointView from '../view/edit-point-view.js';
 
@@ -17,6 +17,9 @@ export default class PointPresenter {
   init = (point) => {
     this.#point = point;
 
+    const prevPointComponent = this.#pointComponent;
+    const prevEditPointComponent = this.#editPointComponent;
+
     this.#pointComponent = new PointView(point);
     this.#editPointComponent = new EditPointView(point);
 
@@ -24,7 +27,26 @@ export default class PointPresenter {
     this.#editPointComponent.setFormSubmitHandler(this.#handleFormSubmit);
     this.#editPointComponent.setClickHandler(this.#handleCloseClick);
 
-    render(this.#pointComponent, this.#pointsContainer);
+    if (prevPointComponent === null || prevEditPointComponent === null) {
+      render(this.#pointComponent, this.#pointsContainer);
+      return;
+    }
+
+    if (this.#pointsContainer.contains(prevPointComponent.element)) {
+      replace(this.#pointComponent, prevPointComponent);
+    }
+
+    if (this.#editPointComponent.contains(prevEditPointComponent.element)) {
+      replace(this.#editPointComponent, prevEditPointComponent);
+    }
+
+    remove(prevPointComponent);
+    remove(prevEditPointComponent);
+  };
+
+  destroy = () => {
+    remove(this.#pointComponent);
+    remove(this.#editPointComponent);
   };
 
   #replacePointToForm = () => {
@@ -55,22 +77,5 @@ export default class PointPresenter {
   #handleCloseClick = () => {
     this.#replaceFormToPoint();
   };
-
-  // pointComponent.setEditClickHandler(() => {
-  //   replacePointToForm();
-  //   document.addEventListener('keydown', onEscKeyDown);
-  // });
-
-  // editPointComponent.setClickHandler(() => {
-  //   replaceFormToPoint();
-  //   document.removeEventListener('keydown', onEscKeyDown);
-  // });
-
-  // editPointComponent.setFormSubmitHandler(() => {
-  //   replaceFormToPoint();
-  //   document.removeEventListener('keydown', onEscKeyDown);
-  // });
-
-  // render(pointComponent, this.#pointsListComponent.element);
 
 }
