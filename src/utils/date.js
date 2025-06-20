@@ -20,4 +20,7 @@ const durationTravel = (dateTo, dateFrom) => {
   }
 };
 
-export {humanizeDatetime, humanizeDate, humanizeDateWithYear, durationTravel};
+const isPast = (dueDate) => dayjs(dueDate).isBefore();
+const isFuture = (dueDate) => dayjs(dueDate).isAfter();
+
+export {humanizeDatetime, humanizeDate, humanizeDateWithYear, durationTravel, isFuture, isPast};

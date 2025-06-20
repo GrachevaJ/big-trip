@@ -129,7 +129,7 @@ export default class EditPointView extends AbstractView {
 
   setClickHandler = (callback) => {
     this._callback.click = callback;
-    this.element.addEventListener('click', this.#clickHandler);
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#clickHandler);
   };
 
   #clickHandler = (evt) => {

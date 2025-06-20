@@ -1,5 +1,5 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import { humanizeDate, humanizeDatetime, durationTravel } from '../utils/date.js';
+import { humanizeDate, humanizeDatetime, durationTravel, isFuture, isPast} from '../utils/date.js';
 import { generateOffersByType } from '../mock/offers.js';
 
 const createPointTmplate = (point) => {
