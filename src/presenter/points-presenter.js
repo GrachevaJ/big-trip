@@ -2,7 +2,7 @@ import PointsListView from '../view/points-list-view.js';
 import SortView from '../view/sort-view.js';
 import NoPointView from '../view/no-point-view.js';
 import PointPresenter from './point-presenter.js';
-
+import { updateItem } from '../utils/common.js';
 import { render, RenderPosition } from '../framework/render.js';
 
 export default class PointsPresenter {
@@ -37,6 +37,11 @@ export default class PointsPresenter {
 
   #renderSort = () => {
     render(this.#sortComponent, this.#container, RenderPosition.AFTERBEGIN);
+  };
+
+  #handlePointChange = (updatedPoint) => {
+    this.#points = updateItem(this.#points, updatedPoint);
+    this.#pointPresenter.get(updatedPoint.id).init(updatedPoint);
   };
 
   #renderPointsList = () => {
