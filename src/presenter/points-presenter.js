@@ -56,7 +56,7 @@ export default class PointsPresenter {
   };
 
   #renderPoint = (point) => {
-    const pointPresenter = new PointPresenter(this.#pointsListComponent.element);
+    const pointPresenter = new PointPresenter(this.#pointsListComponent.element, this.#handlePointChange);
     pointPresenter.init(point);
     this.#pointPresenter.set(point.id, pointPresenter);
   };
