@@ -14,7 +14,7 @@ const siteMainElement = siteBodyElement.querySelector('.trip-events');
 
 const pointsModel = new PointsModel();
 const pointsPresenter = new PointsPresenter(siteMainElement, pointsModel);
-const filters = generateFilter();
+const filters = generateFilter(pointsModel.points);
 
 
 render(new MainInfoView(), siteHeaderInfoElement, RenderPosition.AFTERBEGIN);
