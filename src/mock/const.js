@@ -40,4 +40,5 @@ const types = [
   'restaurant'
 ];
 
+
 export { types, offerTitles, description, destinationNames, picturesSrc};
