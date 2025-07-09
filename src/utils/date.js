@@ -23,4 +23,11 @@ const durationTravel = (dateTo, dateFrom) => {
 const isPast = (dueDate) => dayjs(dueDate).isBefore();
 const isFuture = (dueDate) => dayjs(dueDate).isAfter();
 
-export {humanizeDatetime, humanizeDate, humanizeDateWithYear, durationTravel, isFuture, isPast};
+const sortDay = (pointA, pointB) => new Date(pointA.dateFrom) - new Date(pointB.dateFrom);
+
+const sortTime = (pointA, pointB) => dayjs(pointB.dateTo).diff(pointB.dateFrom) - dayjs(pointA.dateTo).diff(pointA.dateFrom);
+
+
+const sortPrice = (pointA, pointB) => pointB.basePrice - pointA.basePrice;
+
+export {humanizeDatetime, humanizeDate, humanizeDateWithYear, durationTravel, isFuture, isPast, sortDay, sortPrice, sortTime};
