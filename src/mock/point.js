@@ -14,19 +14,29 @@ const generateDate = () => {
 
   return dayjs().add(daysGap, 'day').toDate();
 };
+const destinations = [];
+const createDestination = () => {
+  destinationNames.forEach((item) => (destinations.push({
+    name: item,
+    description: getRandomValue(description),
+    pictures: Array.from({length: getRandomInteger(0,5)}, generatePictures)
+  })));
+};
+createDestination();
 
 export const generatePoint = () => ({
   id: nanoid(),
   basePrice: getRandomInteger(200, 3000),
   dateFrom: generateDate(),
   dateTo: '2025-07-20T22:55:13.845Z',
-  destination: {
-    description: getRandomValue(description),
-    name: getRandomValue(destinationNames),
-    pictures: Array.from({length: getRandomInteger(0,5)}, generatePictures)
-  },
+  destination: getRandomValue(destinations),
+  // {
+  //   description: getRandomValue(description),
+  //   name: getRandomValue(destinationNames),
+  //   pictures: Array.from({length: getRandomInteger(0,5)}, generatePictures)
+  // },
   isFavorite: Math.random() < 0.5 ,
-  offers: Array.from({length: getRandomInteger(0,5)}, (i) => i+1),
+  offers: Array.from({length: getRandomInteger(0,5)}, (v, i) => i+1),
   type: getRandomValue(types)
 });
 

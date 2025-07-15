@@ -16,7 +16,6 @@ const pointsModel = new PointsModel();
 const pointsPresenter = new PointsPresenter(siteMainElement, pointsModel);
 const filters = generateFilter(pointsModel.points);
 
-
 render(new MainInfoView(), siteHeaderInfoElement, RenderPosition.AFTERBEGIN);
 render(new FilterView(filters), siteFilterElement);
 

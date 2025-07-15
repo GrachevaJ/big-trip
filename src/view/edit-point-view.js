@@ -1,7 +1,7 @@
 import AbstractStatefulView from '..//framework/view/abstract-stateful-view.js';
 import { humanizeDateWithYear } from '../utils/date.js';
 import { offersByType} from '../mock/offers.js';
-import { types, destinationNames } from '../mock/const.js';
+import { types, destinationNames} from '../mock/const.js';
 
 const createEditPointTemplate = (point) => {
   const { basePrice, dateFrom, dateTo, destination, offers, type} = point;
@@ -35,8 +35,7 @@ const createEditPointTemplate = (point) => {
 
   };
 
-  // const pictures = destination.pictures;
-  // const createPicturesList = () => `${pictures.map((picture) => `<img class="event__photo" src="${picture.src}" alt="Event photo">`)}`;
+  const createPicturesList = () => `${destination.pictures.map((picture) => `<img class="event__photo" src="${picture.src}" alt="Event photo">`)}`;
 
   return `<li class="trip-events__item">
               <form class="event event--edit" action="#" method="post">
@@ -96,7 +95,11 @@ const createEditPointTemplate = (point) => {
                     <h3 class="event__section-title  event__section-title--destination">Destination</h3>
                     <p class="event__destination-description">${destination.description}</p>
 
-
+                    <div class="event__photos-container">
+                      <div class="event__photos-tape">
+                        ${createPicturesList()}
+                      </div>
+                    </div>
                   </section>
                 </section>
               </form>
@@ -136,13 +139,20 @@ export default class EditPointView extends AbstractStatefulView {
     this.element.querySelectorAll('.event__type-input').forEach((element) => {
       element.addEventListener('click', this.#typeClickHandler);
     });
+    // this.element.querySelectorAll('.event__input  event__input--destination').forEach((element) => element.addEventListener('input', this.#namePointClickHandler));
   };
+
+  // #namePointClickHandler = (evt) => {
+  //   evt.preventDefault();
+  //   this.updateElement({
+  //     destination: evt.target.value,
+  //   });
+  // };
 
   #typeClickHandler = (evt) => {
     evt.preventDefault();
     this.updateElement({
       type: evt.target.value,
-      offers: evt.target.value,
     });
   };
 
