@@ -15,8 +15,8 @@ const generateOffers = () => Array.from({length: getRandomInteger(0, offerTitles
   };
 });
 
+const offersByType = [];
 const generateOffersByType = () => {
-  const offersByType = [];
 
   types.forEach((type) => (offersByType.push({
     type,
@@ -24,6 +24,7 @@ const generateOffersByType = () => {
   })));
   return offersByType;
 };
+generateOffersByType();
 
-export { generateOffersByType};
+export { offersByType};
 

@@ -1,6 +1,6 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import { humanizeDate, humanizeDatetime, durationTravel} from '../utils/date.js';
-import { generateOffersByType } from '../mock/offers.js';
+import { offersByType } from '../mock/offers.js';
 
 const createPointTmplate = (point) => {
   const { basePrice, dateFrom, dateTo, destination, isFavorite, type} = point;
@@ -10,7 +10,6 @@ const createPointTmplate = (point) => {
     : '';
 
   const createOffers = () => {
-    const offersByType = generateOffersByType();
     const pointTypeOffer = offersByType.find((offer) => offer.type === type);
     return `<ul class="event__selected-offers">
               ${pointTypeOffer.offers.map((offer) => `<li class="event__offer">

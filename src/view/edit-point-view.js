@@ -1,21 +1,19 @@
-import AbstractView from '../framework/view/abstract-view.js';
+import AbstractStatefulView from '..//framework/view/abstract-stateful-view.js';
 import { humanizeDateWithYear } from '../utils/date.js';
-import { generateOffersByType } from '../mock/offers.js';
+import { offersByType} from '../mock/offers.js';
 import { types, destinationNames } from '../mock/const.js';
 
 const createEditPointTemplate = (point) => {
   const { basePrice, dateFrom, dateTo, destination, offers, type} = point;
-  // const checkFavorite = isFavorite
-  //   ? 'event__favorite-btn--active'
-  //   : '';
+
   const createTypeList = () => `${types.map((typeItem) => `<div class="event__type-item">
                           <input id="event-type-${typeItem}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${typeItem}">
                           <label class="event__type-label  event__type-label--${typeItem}" for="event-type-${typeItem}-1">${typeItem}</label>
                         </div>`).join('')}`;
+
   const createDestinationList = () => `${destinationNames.map((destinationName) => `<option value="${destinationName}"></option>`)}`;
 
   const createOffers = () => {
-    const offersByType = generateOffersByType();
     const pointTypeOffer = offersByType.find((offer) => offer.type === type);
 
 
@@ -105,16 +103,17 @@ const createEditPointTemplate = (point) => {
             </li>`;
 };
 
-export default class EditPointView extends AbstractView {
-  #point = null;
-
+export default class EditPointView extends AbstractStatefulView {
   constructor(point) {
     super();
-    this.#point = point;
+    this._state = EditPointView.parsePointToState(point);
+
+
+    this.#setInnerHandlers();
   }
 
   get template() {
-    return createEditPointTemplate(this.#point);
+    return createEditPointTemplate(this._state);
   }
 
   setFormSubmitHandler = (callback) => {
@@ -124,7 +123,27 @@ export default class EditPointView extends AbstractView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this._callback.formSubmit(this.#point);
+    this._callback.formSubmit(EditPointView.parseStateToPoint(this._state));
+  };
+
+  static parsePointToState = (point) => (
+    {...point}
+  );
+
+  static parseStateToPoint = (state) => ({...state});
+
+  #setInnerHandlers = () => {
+    this.element.querySelectorAll('.event__type-input').forEach((element) => {
+      element.addEventListener('click', this.#typeClickHandler);
+    });
+  };
+
+  #typeClickHandler = (evt) => {
+    evt.preventDefault();
+    this.updateElement({
+      type: evt.target.value,
+      offers: evt.target.value,
+    });
   };
 
   setClickHandler = (callback) => {
