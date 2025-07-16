@@ -14,7 +14,7 @@ const generateDate = () => {
 
   return dayjs().add(daysGap, 'day').toDate();
 };
-const destinations = [];
+export const destinations = [];
 const createDestination = () => {
   destinationNames.forEach((item) => (destinations.push({
     name: item,

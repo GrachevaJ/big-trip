@@ -2,10 +2,16 @@ import AbstractStatefulView from '..//framework/view/abstract-stateful-view.js';
 import { humanizeDateWithYear } from '../utils/date.js';
 import { offersByType} from '../mock/offers.js';
 import { types, destinationNames} from '../mock/const.js';
+import { destinations } from '../mock/point.js';
 
 const createEditPointTemplate = (point) => {
   const { basePrice, dateFrom, dateTo, destination, offers, type} = point;
 
+  const createDestination = () => {
+    const pointName = destinations.find((item) => item.name === destination.name);
+    return pointName;
+  };
+  const Destination = createDestination();
   const createTypeList = () => `${types.map((typeItem) => `<div class="event__type-item">
                           <input id="event-type-${typeItem}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${typeItem}">
                           <label class="event__type-label  event__type-label--${typeItem}" for="event-type-${typeItem}-1">${typeItem}</label>
@@ -35,7 +41,7 @@ const createEditPointTemplate = (point) => {
 
   };
 
-  const createPicturesList = () => `${destination.pictures.map((picture) => `<img class="event__photo" src="${picture.src}" alt="Event photo">`)}`;
+  const createPicturesList = () => `${Destination.pictures.map((picture) => `<img class="event__photo" src="${picture.src}" alt="Event photo">`)}`;
 
   return `<li class="trip-events__item">
               <form class="event event--edit" action="#" method="post">
@@ -60,7 +66,7 @@ const createEditPointTemplate = (point) => {
                     <label class="event__label  event__type-output" for="event-destination-1">
                       ${type}
                     </label>
-                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.name}" list="destination-list-1">
+                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${Destination.name}" list="destination-list-1">
                     <datalist id="destination-list-1">
                       ${createDestinationList()}
                     </datalist>
@@ -93,7 +99,7 @@ const createEditPointTemplate = (point) => {
 
                   <section class="event__section  event__section--destination">
                     <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-                    <p class="event__destination-description">${destination.description}</p>
+                    <p class="event__destination-description">${Destination.description}</p>
 
                     <div class="event__photos-container">
                       <div class="event__photos-tape">
@@ -139,15 +145,15 @@ export default class EditPointView extends AbstractStatefulView {
     this.element.querySelectorAll('.event__type-input').forEach((element) => {
       element.addEventListener('click', this.#typeClickHandler);
     });
-    // this.element.querySelectorAll('.event__input  event__input--destination').forEach((element) => element.addEventListener('input', this.#namePointClickHandler));
+    this.element.querySelector('.event__input--destination').addEventListener('change', this.#namePointClickHandler);
   };
 
-  // #namePointClickHandler = (evt) => {
-  //   evt.preventDefault();
-  //   this.updateElement({
-  //     destination: evt.target.value,
-  //   });
-  // };
+  #namePointClickHandler = (evt) => {
+    evt.preventDefault();
+    this.updateElement({
+      destination: {name: evt.target.value}
+    });
+  };
 
   #typeClickHandler = (evt) => {
     evt.preventDefault();
