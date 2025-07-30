@@ -154,6 +154,10 @@ export default class EditPointView extends AbstractStatefulView {
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#namePointClickHandler);
   };
 
+  reset = (point) => {
+    this.updateElement(EditPointView.parsePointToState(point));
+  };
+
   #namePointClickHandler = (evt) => {
     evt.preventDefault();
     this.updateElement({
