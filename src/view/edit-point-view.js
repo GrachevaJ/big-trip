@@ -130,6 +130,12 @@ export default class EditPointView extends AbstractStatefulView {
     this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
   };
 
+  _restoreHandlers = () => {
+    this.#setInnerHandlers();
+    this.setFormSubmitHandler(this._callback.formSubmit);
+    this.setClickHandler(this._callback.click);
+  };
+
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
     this._callback.formSubmit(EditPointView.parseStateToPoint(this._state));
