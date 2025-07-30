@@ -3,6 +3,9 @@ import { humanizeDateWithYear } from '../utils/date.js';
 import { offersByType} from '../mock/offers.js';
 import { types, destinationNames} from '../mock/const.js';
 import { destinations } from '../mock/point.js';
+import flatpickr from 'flatpickr';
+
+import 'flatpickr/dist/flatpickr.min.css';
 
 const createEditPointTemplate = (point) => {
   const { basePrice, dateFrom, dateTo, destination, offers, type} = point;
@@ -113,17 +116,29 @@ const createEditPointTemplate = (point) => {
 };
 
 export default class EditPointView extends AbstractStatefulView {
+  #datepicker = null;
+
   constructor(point) {
     super();
     this._state = EditPointView.parsePointToState(point);
 
 
     this.#setInnerHandlers();
+    this.#setDatepicker();
   }
 
   get template() {
     return createEditPointTemplate(this._state);
   }
+
+  removeElement = () => {
+    super.removeElement();
+
+    if (this.#datepicker) {
+      this.#datepicker.destroy();
+      this.#datepicker = null;
+    }
+  };
 
   setFormSubmitHandler = (callback) => {
     this._callback.formSubmit = callback;
@@ -132,6 +147,7 @@ export default class EditPointView extends AbstractStatefulView {
 
   _restoreHandlers = () => {
     this.#setInnerHandlers();
+    this.#setDatepicker();
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setClickHandler(this._callback.click);
   };
@@ -152,6 +168,26 @@ export default class EditPointView extends AbstractStatefulView {
       element.addEventListener('click', this.#typeClickHandler);
     });
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#namePointClickHandler);
+  };
+
+  #dateChangeHandler = ([userDateFrom, userDateTo]) => {
+    this.updateElement({
+      dateFrom: userDateFrom,
+      dateTo: userDateTo,
+    });
+  };
+
+  #setDatepicker = () => {
+    this.#datepicker = flatpickr(
+      this.element.querySelector('.event__field-group--time'),
+      {
+        mode: 'range',
+        dateFormat: 'Y-m-d H:i',
+        enableTime: true,
+        defaultDate: [this._state.dateFrom, this._state.dateTo],
+        onClose: this.#dateChangeHandler,
+      },
+    );
   };
 
   reset = (point) => {

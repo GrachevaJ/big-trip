@@ -28,7 +28,7 @@ export const generatePoint = () => ({
   id: nanoid(),
   basePrice: getRandomInteger(200, 3000),
   dateFrom: generateDate(),
-  dateTo: '2025-07-20T22:55:13.845Z',
+  dateTo: '2025-08-20T22:55:13.845Z',
   destination: getRandomValue(destinations),
   // {
   //   description: getRandomValue(description),
