@@ -14,14 +14,15 @@ export default class PointsPresenter {
   #pointsListComponent = new PointsListView();
   #noPointsComponent = new NoPointView();
 
-  // #points = [];
   #pointPresenter = new Map();
   #currentSortType = SortType.DAY;
-  // #defaultSortPoints = this.#points.sort(sortDay);
+
 
   constructor(container, pointsModel) {
     this.#container = container;
     this.#pointsModel = pointsModel;
+
+    this.#pointsModel.addObserver(this.#handleModelEvent);
   }
 
   get points() {
@@ -46,22 +47,6 @@ export default class PointsPresenter {
   #renderNoPoints = () => {
     render(this.#noPointsComponent, this.#container);
   };
-
-  // #sortPoints = (sortType) => {
-  //   switch (sortType) {
-  //     case SortType.PRICE:
-  //       this.#points.sort(sortPrice);
-  //       break;
-  //     case SortType.TIME:
-  //       this.#points.sort(sortTime);
-  //       break;
-  //     default:
-  //       this.#points = [...this.#defaultSortPoints];
-  //       break;
-  //   }
-
-  //   this.#currentSortType = sortType;
-  // };
 
   #handleSortTypeChange = (sortType) => {
     if (this.#currentSortType === sortType) {
@@ -90,8 +75,12 @@ export default class PointsPresenter {
     this.#pointPresenter.forEach((presenter) => presenter.resetView());
   };
 
-  #handlePointChange = (updatedPoint) => {
-    this.#pointPresenter.get(updatedPoint.id).init(updatedPoint);
+  #handleViewAction = (actionType, updateType, update) => {
+    console.log(actionType, updateType, update);
+  };
+
+  #handleModelEvent = (updateType, data) => {
+    console.log(updateType, data);
   };
 
   #renderPointsList = () => {
@@ -106,7 +95,7 @@ export default class PointsPresenter {
   };
 
   #renderPoint = (point) => {
-    const pointPresenter = new PointPresenter(this.#pointsListComponent.element, this.#handlePointChange, this.#handleModeChange);
+    const pointPresenter = new PointPresenter(this.#pointsListComponent.element, this.#handleViewAction, this.#handleModeChange);
     pointPresenter.init(point);
     this.#pointPresenter.set(point.id, pointPresenter);
   };
