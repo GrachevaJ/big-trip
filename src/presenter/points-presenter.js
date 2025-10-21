@@ -25,6 +25,10 @@ export default class PointsPresenter {
     this.#pointsModel = pointsModel;
   }
 
+  get points() {
+    return this.#pointsModel.points;
+  }
+
   init = () => {
     this.#points = [...this.#pointsModel.points];
     this.#defaultSortPoints = this.#points.sort(sortDay);
