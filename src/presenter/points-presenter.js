@@ -2,8 +2,8 @@ import PointsListView from '../view/points-list-view.js';
 import SortView from '../view/sort-view.js';
 import NoPointView from '../view/no-point-view.js';
 import PointPresenter from './point-presenter.js';
-import { render, RenderPosition, replace } from '../framework/render.js';
-import { SortType } from '../const.js';
+import { remove, render, RenderPosition} from '../framework/render.js';
+import { SortType, UpdateType, UserAction } from '../const.js';
 import { sortDay, sortPrice, sortTime } from '../utils/date.js';
 
 export default class PointsPresenter {
@@ -15,7 +15,7 @@ export default class PointsPresenter {
   #noPointsComponent = new NoPointView();
 
   #pointPresenter = new Map();
-  #currentSortType = SortType.DAY;
+  #currentSortType = SortType.DEFAULT;
 
 
   constructor(container, pointsModel) {
@@ -31,17 +31,19 @@ export default class PointsPresenter {
         return [...this.#pointsModel.points].sort(sortPrice);
       case SortType.TIME:
         return [...this.#pointsModel.points].sort(sortTime);
+      case SortType.DAY:
+        return [...this.#pointsModel.points].sort(sortDay);
     }
 
     return [...this.#pointsModel.points].sort(sortDay);
   }
 
   init = () => {
-    this.#renderPointsList();
+    this.#renderBoard();
   };
 
-  #renderPoints = (points) => {
-    points.forEach((point) => this.#renderPoint(point));
+  #renderPoints = () => {
+    this.points.forEach((point) => this.#renderPoint(point));
   };
 
   #renderNoPoints = () => {
@@ -55,18 +57,17 @@ export default class PointsPresenter {
 
     this.#currentSortType = sortType;
     this.#clearPointsList();
+    this.#renderBoard();
+  };
+
+  #renderBoard = () => {
+    this.#renderSort();
     this.#renderPointsList();
   };
 
   #renderSort = () => {
-    if (!this.#sortComponent) {
-      this.#sortComponent = new SortView(this.#currentSortType);
-      render(this.#sortComponent, this.#container, RenderPosition.AFTERBEGIN);
-    } else {
-      const updatedSortComponent = new SortView(this.#currentSortType);
-      replace(updatedSortComponent, this.#sortComponent);
-      this.#sortComponent = updatedSortComponent;
-    }
+    this.#sortComponent = new SortView(this.#currentSortType);
+    render(this.#sortComponent, this.#container, RenderPosition.AFTERBEGIN);
 
     this.#sortComponent.setSortTypeChangeHandler(this.#handleSortTypeChange);
   };
@@ -76,21 +77,46 @@ export default class PointsPresenter {
   };
 
   #handleViewAction = (actionType, updateType, update) => {
-    console.log(actionType, updateType, update);
+    switch (actionType) {
+      case UserAction.UPDATE_POINT:
+        this.#pointsModel.updatePoint(updateType, update);
+        break;
+      case UserAction.ADD_POINT:
+        this.#pointsModel.addPoint(updateType, update);
+        break;
+      case UserAction.DELETE_POINT:
+        this.#pointsModel.deletePoint(updateType, update);
+        break;
+    }
   };
 
   #handleModelEvent = (updateType, data) => {
-    console.log(updateType, data);
+    switch (updateType) {
+      case UpdateType.PATCH:
+        this.#pointPresenter.get(data.id).init(data);
+        break;
+      case UpdateType.MINOR:
+        this.#clearPointsList();
+        this.#renderSort();
+        this.#renderPointsList();
+        break;
+      case UpdateType.MAJOR:
+        this.#clearPointsList({resetSortType: true});
+        this.#renderSort();
+        this.#renderPointsList();
+        break;
+    }
   };
 
   #renderPointsList = () => {
+    const points = this.points;
+
     render(this.#pointsListComponent, this.#container);
 
-    if (this.points.length === 0) {
+    if (points.length === 0) {
       this.#renderNoPoints();
+      return;
     }
-
-    this.#renderSort();
     this.#renderPoints();
   };
 
@@ -100,8 +126,15 @@ export default class PointsPresenter {
     this.#pointPresenter.set(point.id, pointPresenter);
   };
 
-  #clearPointsList = () => {
+  #clearPointsList = ({resetSortType = false} = {}) => {
     this.#pointPresenter.forEach((presenter) => presenter.destroy());
     this.#pointPresenter.clear();
+
+    remove(this.#sortComponent);
+    remove(this.#noPointsComponent);
+
+    if (resetSortType) {
+      this.#currentSortType = SortType.DEFAULT;
+    }
   };
 }

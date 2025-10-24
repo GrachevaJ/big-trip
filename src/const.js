@@ -7,7 +7,8 @@ const FilterType = {
 const SortType = {
   DAY: 'day',
   TIME: 'time',
-  PRICE: 'price'
+  PRICE: 'price',
+  DEFAULT: 'day'
 };
 
 const UserAction = {
