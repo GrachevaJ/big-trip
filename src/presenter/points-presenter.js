@@ -56,13 +56,21 @@ export default class PointsPresenter {
     }
 
     this.#currentSortType = sortType;
-    this.#clearPointsList();
+    this.#clearBoard();
     this.#renderBoard();
   };
 
   #renderBoard = () => {
+    const points = this.points;
+
+    render(this.#pointsListComponent, this.#container);
+
+    if (points.length === 0) {
+      this.#renderNoPoints();
+      return;
+    }
     this.#renderSort();
-    this.#renderPointsList();
+    this.#renderPoints();
   };
 
   #renderSort = () => {
@@ -96,28 +104,15 @@ export default class PointsPresenter {
         this.#pointPresenter.get(data.id).init(data);
         break;
       case UpdateType.MINOR:
-        this.#clearPointsList();
-        this.#renderSort();
-        this.#renderPointsList();
+        this.#clearBoard();
+        this.#renderBoard();
         break;
       case UpdateType.MAJOR:
-        this.#clearPointsList({resetSortType: true});
-        this.#renderSort();
-        this.#renderPointsList();
+        this.#clearBoard({resetSortType: true});
+        this.#renderBoard();
+
         break;
     }
-  };
-
-  #renderPointsList = () => {
-    const points = this.points;
-
-    render(this.#pointsListComponent, this.#container);
-
-    if (points.length === 0) {
-      this.#renderNoPoints();
-      return;
-    }
-    this.#renderPoints();
   };
 
   #renderPoint = (point) => {
@@ -126,7 +121,7 @@ export default class PointsPresenter {
     this.#pointPresenter.set(point.id, pointPresenter);
   };
 
-  #clearPointsList = ({resetSortType = false} = {}) => {
+  #clearBoard = ({resetSortType = false} = {}) => {
     this.#pointPresenter.forEach((presenter) => presenter.destroy());
     this.#pointPresenter.clear();
 

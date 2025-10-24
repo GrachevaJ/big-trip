@@ -92,7 +92,7 @@ const createEditPointTemplate = (point) => {
                   </div>
 
                   <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-                  <button class="event__reset-btn" type="reset">Cancel</button>
+                  <button class="event__reset-btn" type="reset">Delete</button>
                 </header>
                 <section class="event__details">
                   <section class="event__section  event__section--offers">
@@ -145,6 +145,12 @@ export default class EditPointView extends AbstractStatefulView {
     this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
   };
 
+  setDeleteClickHandler = (callback) => {
+    this._callback.deleteClick = callback;
+
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#formDeleteClickHandler);
+  };
+
   _restoreHandlers = () => {
     this.#setInnerHandlers();
     this.#setDatepicker();
@@ -155,6 +161,11 @@ export default class EditPointView extends AbstractStatefulView {
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
     this._callback.formSubmit(EditPointView.parseStateToPoint(this._state));
+  };
+
+  #formDeleteClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.deleteClick(EditPointView.parseStateToPoint(this._state));
   };
 
   static parsePointToState = (point) => (
