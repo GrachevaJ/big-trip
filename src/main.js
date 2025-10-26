@@ -1,10 +1,12 @@
 import MainInfoView from './view/main-info-view.js';
-import FilterView from './view/filter-view.js';
 import PointsPresenter from './presenter/points-presenter.js';
 import PointsModel from './model/points-model.js';
+import FilterModel from './model/filter-model.js';
+import FilterPresenter from './presenter/filter-presenter.js';
 
 import { render,RenderPosition } from './framework/render.js';
-import { generateFilter } from './mock/filter.js';
+import { filter } from './utils/filter.js';
+
 
 const siteBodyElement = document.querySelector('.page-body');
 const siteHeaderElement = siteBodyElement.querySelector('.page-header');
@@ -13,11 +15,12 @@ const siteFilterElement = siteHeaderInfoElement.querySelector('.trip-controls__f
 const siteMainElement = siteBodyElement.querySelector('.trip-events');
 
 const pointsModel = new PointsModel();
-const pointsPresenter = new PointsPresenter(siteMainElement, pointsModel);
-const filters = generateFilter(pointsModel.points);
+const filterModel = new FilterModel();
+const pointsPresenter = new PointsPresenter(siteMainElement, pointsModel, filterModel);
+const filterPresenter = new FilterPresenter(siteFilterElement, filterModel, pointsModel);
 
 render(new MainInfoView(), siteHeaderInfoElement, RenderPosition.AFTERBEGIN);
-render(new FilterView(filters), siteFilterElement);
 
+filterPresenter.init();
 pointsPresenter.init();
 
