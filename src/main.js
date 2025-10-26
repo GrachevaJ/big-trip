@@ -5,7 +5,6 @@ import FilterModel from './model/filter-model.js';
 import FilterPresenter from './presenter/filter-presenter.js';
 
 import { render,RenderPosition } from './framework/render.js';
-import { filter } from './utils/filter.js';
 
 
 const siteBodyElement = document.querySelector('.page-body');
