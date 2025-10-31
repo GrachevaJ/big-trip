@@ -17,8 +17,20 @@ const pointsModel = new PointsModel();
 const filterModel = new FilterModel();
 const pointsPresenter = new PointsPresenter(siteMainElement, pointsModel, filterModel);
 const filterPresenter = new FilterPresenter(siteFilterElement, filterModel, pointsModel);
+const newPointButton = document.querySelector('.trip-main__event-add-btn');
 
 render(new MainInfoView(), siteHeaderInfoElement, RenderPosition.AFTERBEGIN);
+
+const handleNewPointFormClose = () => {
+  newPointButton.removeAttribute('disabled', 'disabled');
+};
+
+const handleNewPointButtonClick = () => {
+  pointsPresenter.createPoint(handleNewPointFormClose);
+  newPointButton.setAttribute('disabled', 'disabled');
+};
+
+newPointButton.addEventListener('click', handleNewPointButtonClick);
 
 filterPresenter.init();
 pointsPresenter.init();

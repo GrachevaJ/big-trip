@@ -4,8 +4,23 @@ import { offersByType} from '../mock/offers.js';
 import { types, destinationNames} from '../mock/const.js';
 import { destinations } from '../mock/point.js';
 import flatpickr from 'flatpickr';
+import he from 'he';
 
 import 'flatpickr/dist/flatpickr.min.css';
+
+const BLANK_POINT = {
+  basePrice: '',
+  dateFrom: null,
+  dateTo: null,
+  destination: {
+    name: '',
+    pictures: null,
+    description: '',
+  },
+  offers: '',
+  type: 'taxi',
+  pictures: '',
+};
 
 const createEditPointTemplate = (point) => {
   const { basePrice, dateFrom, dateTo, destination, offers, type} = point;
@@ -44,7 +59,7 @@ const createEditPointTemplate = (point) => {
 
   };
 
-  const createPicturesList = () => `${Destination.pictures.map((picture) => `<img class="event__photo" src="${picture.src}" alt="Event photo">`)}`;
+  const createPicturesList = () => `${(destination.pictures === null || destination.pictures === undefined) ? '' : Destination.pictures.map((picture) => `<img class="event__photo" src="${picture.src}" alt="Event photo">`)}`;
 
   return `<li class="trip-events__item">
               <form class="event event--edit" action="#" method="post">
@@ -69,7 +84,7 @@ const createEditPointTemplate = (point) => {
                     <label class="event__label  event__type-output" for="event-destination-1">
                       ${type}
                     </label>
-                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${Destination.name}" list="destination-list-1">
+                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.name === '' ? '' : Destination.name}" list="destination-list-1">
                     <datalist id="destination-list-1">
                       ${createDestinationList()}
                     </datalist>
@@ -77,10 +92,10 @@ const createEditPointTemplate = (point) => {
 
                   <div class="event__field-group  event__field-group--time">
                     <label class="visually-hidden" for="event-start-time-1">From</label>
-                    <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${humanizeDateWithYear(dateFrom)}">
+                    <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${dateFrom === null ? '' : humanizeDateWithYear(dateFrom)}">
                     &mdash;
                     <label class="visually-hidden" for="event-end-time-1">To</label>
-                    <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${humanizeDateWithYear(dateTo)}">
+                    <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dateTo === null ? '' : humanizeDateWithYear(dateTo)}">
                   </div>
 
                   <div class="event__field-group  event__field-group--price">
@@ -102,7 +117,7 @@ const createEditPointTemplate = (point) => {
 
                   <section class="event__section  event__section--destination">
                     <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-                    <p class="event__destination-description">${Destination.description}</p>
+                    <p class="event__destination-description">${(destination.description || destination.name) === '' ? '' : Destination.description}</p>
 
                     <div class="event__photos-container">
                       <div class="event__photos-tape">
@@ -118,7 +133,7 @@ const createEditPointTemplate = (point) => {
 export default class EditPointView extends AbstractStatefulView {
   #datepicker = null;
 
-  constructor(point) {
+  constructor(point = BLANK_POINT) {
     super();
     this._state = EditPointView.parsePointToState(point);
 
