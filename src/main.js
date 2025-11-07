@@ -3,9 +3,11 @@ import PointsPresenter from './presenter/points-presenter.js';
 import PointsModel from './model/points-model.js';
 import FilterModel from './model/filter-model.js';
 import FilterPresenter from './presenter/filter-presenter.js';
-
+import PointsApiService from './points-api-service.js';
 import { render,RenderPosition } from './framework/render.js';
 
+const AUTHORIZATION = 'Basic sdflkj3lwkejfls89';
+const END_POINT = 'https://17.ecmascript.htmlacademy.pro/big-trip';
 
 const siteBodyElement = document.querySelector('.page-body');
 const siteHeaderElement = siteBodyElement.querySelector('.page-header');
@@ -13,7 +15,7 @@ const siteHeaderInfoElement = siteHeaderElement.querySelector('.trip-main');
 const siteFilterElement = siteHeaderInfoElement.querySelector('.trip-controls__filters');
 const siteMainElement = siteBodyElement.querySelector('.trip-events');
 
-const pointsModel = new PointsModel();
+const pointsModel = new PointsModel(new PointsApiService(END_POINT, AUTHORIZATION));
 const filterModel = new FilterModel();
 const pointsPresenter = new PointsPresenter(siteMainElement, pointsModel, filterModel);
 const filterPresenter = new FilterPresenter(siteFilterElement, filterModel, pointsModel);
