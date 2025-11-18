@@ -21,6 +21,22 @@ const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
+  INIT: 'INIT',
 };
 
-export {FilterType, SortType, UpdateType, UserAction};
+
+const BLANK_POINT = {
+  basePrice: '',
+  dateFrom: null,
+  dateTo: null,
+  destination: {
+    name: '',
+    pictures: null,
+    description: '',
+  },
+  offers: '',
+  type: '',
+  pictures: '',
+};
+
+export {FilterType, SortType, UpdateType, UserAction, BLANK_POINT};

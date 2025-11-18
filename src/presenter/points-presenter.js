@@ -1,6 +1,7 @@
 import PointsListView from '../view/points-list-view.js';
 import SortView from '../view/sort-view.js';
 import NoPointView from '../view/no-point-view.js';
+import LoadingView from '../view/loading-view.js';
 import PointPresenter from './point-presenter.js';
 import PointNewPresenter from './point-new-presenter.js';
 import { remove, render, RenderPosition} from '../framework/render.js';
@@ -14,23 +15,28 @@ export default class PointsPresenter {
   #sortComponent = null;
   #filterModel = null;
   #pointNewPresenter = null;
+  #pointDetailsModel = null;
 
   #pointsListComponent = new PointsListView();
   #noPointsComponent = null;
+  #loadingComponent = new LoadingView();
 
   #pointPresenter = new Map();
   #currentSortType = SortType.DEFAULT;
   #filterType = FilterType.EVERYTHING;
+  #isLoading = true;
 
 
-  constructor(container, pointsModel, filterModel) {
+  constructor(container, pointsModel, filterModel, pointDetailsModel) {
     this.#container = container;
     this.#pointsModel = pointsModel;
     this.#filterModel = filterModel;
+    this.#pointDetailsModel = pointDetailsModel;
     this.#pointNewPresenter = new PointNewPresenter(this.#pointsListComponent.element, this.#handleViewAction);
 
     this.#pointsModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
+    this.#pointDetailsModel.addObserver(this.#handleModelEvent);
   }
 
   get points() {
@@ -50,6 +56,14 @@ export default class PointsPresenter {
     return filteredPoints.sort(sortDay);
   }
 
+  get pointDetails() {
+    const destinations = this.#pointDetailsModel.destinations;
+    const offers = this.#pointDetailsModel.offers;
+    const pointDetails = {destinations, offers};
+
+    return pointDetails;
+  }
+
   init = () => {
     this.#renderBoard();
   };
@@ -57,11 +71,11 @@ export default class PointsPresenter {
   createPoint = (callback) => {
     this.#currentSortType = SortType.DEFAULT;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-    this.#pointNewPresenter.init(callback);
+    this.#pointNewPresenter.init(callback, this.pointDetails);
   };
 
-  #renderPoints = () => {
-    this.points.forEach((point) => this.#renderPoint(point));
+  #renderPoints = (pointDetails) => {
+    this.points.forEach((point) => this.#renderPoint(point, pointDetails));
   };
 
   #renderNoPoints = () => {
@@ -80,16 +94,21 @@ export default class PointsPresenter {
   };
 
   #renderBoard = () => {
-    const points = this.points;
-
     render(this.#pointsListComponent, this.#container);
+    if (this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
+
+    const points = this.points;
+    const pointDetails = this.pointDetails;
 
     if (points.length === 0) {
       this.#renderNoPoints();
       return;
     }
     this.#renderSort();
-    this.#renderPoints();
+    this.#renderPoints(pointDetails);
   };
 
   #renderSort = () => {
@@ -130,14 +149,22 @@ export default class PointsPresenter {
       case UpdateType.MAJOR:
         this.#clearBoard({resetSortType: true});
         this.#renderBoard();
-
+        break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        remove(this.#loadingComponent);
+        this.#renderBoard();
         break;
     }
   };
 
-  #renderPoint = (point) => {
+  #renderLoading = () => {
+    render(this.#loadingComponent, this.#container);
+  };
+
+  #renderPoint = (point, pointDetails) => {
     const pointPresenter = new PointPresenter(this.#pointsListComponent.element, this.#handleViewAction, this.#handleModeChange);
-    pointPresenter.init(point);
+    pointPresenter.init(point, pointDetails);
     this.#pointPresenter.set(point.id, pointPresenter);
   };
 
@@ -147,6 +174,7 @@ export default class PointsPresenter {
     this.#pointPresenter.clear();
 
     remove(this.#sortComponent);
+    remove(this.#loadingComponent);
 
     if (this.#noPointsComponent) {
       remove(this.#noPointsComponent);

@@ -1,22 +1,29 @@
-import { generatePoint } from '../mock/point.js';
 import Observable from '../framework/observable.js';
+import { UpdateType } from '../const.js';
 
 export default class PointsModel extends Observable {
   #pointsApiService = null;
-  #points = Array.from({length: 10}, generatePoint);
+  #points = [];
 
   constructor(pointsApiService) {
     super();
     this.#pointsApiService = pointsApiService;
-
-    this.#pointsApiService.points.then((points) => {
-      console.log(points.map(this.#adaptToClient));
-    });
   }
 
   get points() {
     return this.#points;
   }
+
+  init = async () => {
+    try {
+      const points = await this.#pointsApiService.points;
+      this.#points = points.map(this.#adaptToClient);
+    } catch(err) {
+      this.#points = [];
+    }
+
+    this._notify(UpdateType.INIT);
+  };
 
   updatePoint = (updateType, update) => {
     const index = this.#points.findIndex((point) => point.id === update.id);
@@ -74,20 +81,5 @@ export default class PointsModel extends Observable {
     return adaptedPoint;
   };
 
-  #adaptToServer = (point) => {
-    const adaptedPoint = {...point,
-      'date_from': point.dateFrom instanceof Date ? point.dateFrom.toISOString() : null,
-      'date_to': point.dateTo instanceof Date ? point.dateTo.toISOString() : null,
-      'is_favorite': point.isFavorite,
-      'base_price': point.basePrice,
-    };
-
-    delete adaptedPoint.dateFrom;
-    delete adaptedPoint.dateTo;
-    delete adaptedPoint.isFavorite;
-    delete adaptedPoint.basePrice;
-
-    return adaptedPoint;
-  };
 
 }

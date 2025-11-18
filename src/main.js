@@ -2,6 +2,7 @@ import MainInfoView from './view/main-info-view.js';
 import PointsPresenter from './presenter/points-presenter.js';
 import PointsModel from './model/points-model.js';
 import FilterModel from './model/filter-model.js';
+import PointDetailsModel from './model/point-details-model.js';
 import FilterPresenter from './presenter/filter-presenter.js';
 import PointsApiService from './points-api-service.js';
 import { render,RenderPosition } from './framework/render.js';
@@ -17,7 +18,8 @@ const siteMainElement = siteBodyElement.querySelector('.trip-events');
 
 const pointsModel = new PointsModel(new PointsApiService(END_POINT, AUTHORIZATION));
 const filterModel = new FilterModel();
-const pointsPresenter = new PointsPresenter(siteMainElement, pointsModel, filterModel);
+const pointDetailsModel = new PointDetailsModel(new PointsApiService(END_POINT, AUTHORIZATION));
+const pointsPresenter = new PointsPresenter(siteMainElement, pointsModel, filterModel, pointDetailsModel);
 const filterPresenter = new FilterPresenter(siteFilterElement, filterModel, pointsModel);
 const newPointButton = document.querySelector('.trip-main__event-add-btn');
 
@@ -36,4 +38,6 @@ newPointButton.addEventListener('click', handleNewPointButtonClick);
 
 filterPresenter.init();
 pointsPresenter.init();
+pointsModel.init();
+pointDetailsModel.init();
 

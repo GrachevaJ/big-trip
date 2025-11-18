@@ -1,22 +1,22 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import { humanizeDate, humanizeDatetime, durationTravel} from '../utils/date.js';
-import { offersByType } from '../mock/offers.js';
+
 
 const createPointTmplate = (point) => {
-  const { basePrice, dateFrom, dateTo, destination, isFavorite, type} = point;
+  const { basePrice, dateFrom, dateTo, destination, offers, isFavorite, type} = point.point;
 
   const checkFavorite = isFavorite
     ? 'event__favorite-btn--active'
     : '';
 
   const createOffers = () => {
-    const pointTypeOffer = offersByType.find((offer) => offer.type === type);
+    const pointTypeOffer = point.pointDetails.offers.find((offer) => offer.type === type);
     return `<ul class="event__selected-offers">
-              ${pointTypeOffer.offers.map((offer) => `<li class="event__offer">
+              ${pointTypeOffer.offers.map((offer) => offers.includes(offer.id) ? `<li class="event__offer">
                     <span class="event__offer-title">${offer.title}</span>
                     &plus;&euro;&nbsp;
                     <span class="event__offer-price">${offer.price}</span>
-                  </li>`).join('')}
+                  </li>` : '').join('')}
                 </ul>`;
 
   };
@@ -59,9 +59,9 @@ const createPointTmplate = (point) => {
 export default class PointView extends AbstractView {
   #point = null;
 
-  constructor(point) {
+  constructor(point, pointDetails) {
     super();
-    this.#point = point;
+    this.#point = {point, pointDetails};
   }
 
   get template() {

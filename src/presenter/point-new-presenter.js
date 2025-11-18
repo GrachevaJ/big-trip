@@ -1,6 +1,6 @@
 import { render, RenderPosition, remove } from '../framework/render.js';
 import EditPointView from '../view/edit-point-view.js';
-import { UserAction, UpdateType } from '../const.js';
+import { UserAction, UpdateType, BLANK_POINT } from '../const.js';
 import { nanoid } from 'nanoid';
 
 
@@ -10,21 +10,23 @@ export default class PointNewPresenter {
   #editPointComponent = null;
   #destroyCallback = null;
 
-  #point = null;
+  #point = BLANK_POINT;
+  #pointDetails = null;
 
   constructor(pointsContainer, changeData) {
     this.#pointsContainer = pointsContainer;
     this.#changeData = changeData;
   }
 
-  init = (callback) => {
+  init = (callback, pointDetails) => {
     this.#destroyCallback = callback;
+    this.#pointDetails = pointDetails;
 
     if (this.#editPointComponent !== null) {
       return;
     }
 
-    this.#editPointComponent = new EditPointView();
+    this.#editPointComponent = new EditPointView(this.#point, pointDetails);
 
     this.#editPointComponent.setFormSubmitHandler(this.#handleFormSubmit);
     this.#editPointComponent.setClickHandler(this.#handleCloseClick);

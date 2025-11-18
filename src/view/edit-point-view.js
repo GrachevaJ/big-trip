@@ -1,44 +1,31 @@
 import AbstractStatefulView from '..//framework/view/abstract-stateful-view.js';
 import { humanizeDateWithYear } from '../utils/date.js';
-import { offersByType} from '../mock/offers.js';
-import { types, destinationNames} from '../mock/const.js';
-import { destinations } from '../mock/point.js';
+
 import flatpickr from 'flatpickr';
 import he from 'he';
 
 import 'flatpickr/dist/flatpickr.min.css';
 
-const BLANK_POINT = {
-  basePrice: '',
-  dateFrom: null,
-  dateTo: null,
-  destination: {
-    name: '',
-    pictures: null,
-    description: '',
-  },
-  offers: '',
-  type: 'taxi',
-  pictures: '',
-};
+
 
 const createEditPointTemplate = (point) => {
-  const { basePrice, dateFrom, dateTo, destination, offers, type} = point;
+  const { basePrice, dateFrom, dateTo, destination, offers, type} = point.point;
 
   const createDestination = () => {
-    const pointName = destinations.find((item) => item.name === destination.name);
+    const pointName = point.pointDetails.destinations.find((item) => item.name === destination.name);
     return pointName;
   };
   const Destination = createDestination();
-  const createTypeList = () => `${types.map((typeItem) => `<div class="event__type-item">
-                          <input id="event-type-${typeItem}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${typeItem}">
-                          <label class="event__type-label  event__type-label--${typeItem}" for="event-type-${typeItem}-1">${typeItem}</label>
+
+  const createTypeList = () => `${point.pointDetails.offers.map((typeItem) => `<div class="event__type-item">
+                          <input id="event-type-${typeItem.type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${typeItem.type}">
+                          <label class="event__type-label  event__type-label--${typeItem.type}" for="event-type-${typeItem.type}-1">${typeItem.type}</label>
                         </div>`).join('')}`;
 
-  const createDestinationList = () => `${destinationNames.map((destinationName) => `<option value="${destinationName}"></option>`)}`;
+  const createDestinationList = () => `${point.pointDetails.destinations.map((elem) => `<option value="${elem.name}"></option>`)}`;
 
   const createOffers = () => {
-    const pointTypeOffer = offersByType.find((offer) => offer.type === type);
+    const pointTypeOffer = point.pointDetails.offers.find((offer) => offer.type === type);
 
 
     return `<div class="event__available-offers">
@@ -59,7 +46,7 @@ const createEditPointTemplate = (point) => {
 
   };
 
-  const createPicturesList = () => `${(destination.pictures === null || destination.pictures === undefined) ? '' : Destination.pictures.map((picture) => `<img class="event__photo" src="${picture.src}" alt="Event photo">`)}`;
+  const createPicturesList = () => `${(destination.pictures === null || destination.pictures === undefined) ? '' : Destination.pictures.map((picture) => `<img class="event__photo" src="${picture.src}" alt="${picture.description}">`)}`;
 
   return `<li class="trip-events__item">
               <form class="event event--edit" action="#" method="post">
@@ -110,14 +97,14 @@ const createEditPointTemplate = (point) => {
                   <button class="event__reset-btn" type="reset">Delete</button>
                 </header>
                 <section class="event__details">
-                  <section class="event__section  event__section--offers">
+                  ${type !== '' ? `<section class="event__section  event__section--offers">
                     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
                     ${createOffers()}
-                  </section>
+                  </section>` : ''}
 
                   <section class="event__section  event__section--destination">
-                    <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-                    <p class="event__destination-description">${(destination.description || destination.name) === '' ? '' : Destination.description}</p>
+                    ${(destination.description || destination.name) !== '' ?`<h3 class="event__section-title  event__section-title--destination">Destination</h3>
+                    <p class="event__destination-description">${Destination.description}</p>` : ''}
 
                     <div class="event__photos-container">
                       <div class="event__photos-tape">
@@ -133,9 +120,9 @@ const createEditPointTemplate = (point) => {
 export default class EditPointView extends AbstractStatefulView {
   #datepicker = null;
 
-  constructor(point = BLANK_POINT) {
+  constructor(point, pointDetails) {
     super();
-    this._state = EditPointView.parsePointToState(point);
+    this._state = EditPointView.parsePointToState({point, pointDetails});
 
 
     this.#setInnerHandlers();
@@ -223,14 +210,14 @@ export default class EditPointView extends AbstractStatefulView {
   #namePointClickHandler = (evt) => {
     evt.preventDefault();
     this.updateElement({
-      destination: {name: evt.target.value}
+      point: {destination: {name: evt.target.value}}
     });
   };
 
   #typeClickHandler = (evt) => {
     evt.preventDefault();
     this.updateElement({
-      type: evt.target.value,
+      point: {type: evt.target.value},
     });
   };
 
