@@ -65,6 +65,7 @@ export default class PointsPresenter {
   }
 
   init = () => {
+    this.#renderSort();
     this.#renderBoard();
   };
 
@@ -74,8 +75,8 @@ export default class PointsPresenter {
     this.#pointNewPresenter.init(callback, this.pointDetails);
   };
 
-  #renderPoints = (pointDetails) => {
-    this.points.forEach((point) => this.#renderPoint(point, pointDetails));
+  #renderPoints = (points, pointDetails) => {
+    points.forEach((point) => this.#renderPoint(point, pointDetails));
   };
 
   #renderNoPoints = () => {
@@ -107,8 +108,8 @@ export default class PointsPresenter {
       this.#renderNoPoints();
       return;
     }
-    this.#renderSort();
-    this.#renderPoints(pointDetails);
+
+    this.#renderPoints(points, pointDetails);
   };
 
   #renderSort = () => {
