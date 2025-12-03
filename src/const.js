@@ -26,7 +26,7 @@ const UpdateType = {
 
 
 const BLANK_POINT = {
-  basePrice: '',
+  basePrice: 0,
   dateFrom: null,
   dateTo: null,
   destination: {

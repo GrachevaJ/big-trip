@@ -65,7 +65,6 @@ export default class PointsPresenter {
   }
 
   init = () => {
-    this.#renderSort();
     this.#renderBoard();
   };
 
@@ -108,7 +107,7 @@ export default class PointsPresenter {
       this.#renderNoPoints();
       return;
     }
-
+  this.#renderSort();
     this.#renderPoints(points, pointDetails);
   };
 

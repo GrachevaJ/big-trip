@@ -36,8 +36,8 @@ const createEditPointTemplate = (point, pointDetails) => {
     const checked = offers.includes(offer.id) ? 'checked' : '';
 
     return `<div class="event__offer-selector">
-                        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.title}-1" type="checkbox" name="event-offer-${offer.title}" ${checked}>
-                        <label class="event__offer-label" for="event-offer-${offer.title}-1">
+                        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.title}-${offer.id}" type="checkbox" name="event-offer-${offer.title}" ${checked}>
+                        <label class="event__offer-label" for="event-offer-${offer.title}-${offer.id}">
                           <span class="event__offer-title">${offer.title}</span>
                           &plus;&euro;&nbsp;
                           <span class="event__offer-price">${offer.price}</span>
@@ -47,7 +47,6 @@ const createEditPointTemplate = (point, pointDetails) => {
                       </div>`;
 
   };
-
 
   const createPicturesList = () => `${Destination.pictures.map((picture) => `<img class="event__photo" src="${picture.src}" alt="${picture.description}">`)}`;
 
@@ -93,11 +92,11 @@ const createEditPointTemplate = (point, pointDetails) => {
                       <span class="visually-hidden">Price</span>
                       &euro;
                     </label>
-                    <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}">
+                    <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${basePrice}">
                   </div>
 
                   <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-                  <button class="event__reset-btn" type="reset">${basePrice === '' ? 'Cancel' : 'Delete'}</button>
+                  <button class="event__reset-btn" type="reset">${basePrice === 0 ? 'Cancel' : 'Delete'}</button>
                 </header>
                 <section class="event__details">
                   ${type !== '' ? `<section class="event__section  event__section--offers">
@@ -187,7 +186,9 @@ export default class EditPointView extends AbstractStatefulView {
     });
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#namePointClickHandler);
     this.element.querySelector('.event__input--price').addEventListener('change', this.#priceClickHandler);
-
+    this.element.querySelectorAll('.event__offer-checkbox').forEach((element) => {
+      element.addEventListener('change', this.#offersClickHandler);
+    });
   };
 
   #dateChangeHandler = ([userDateFrom, userDateTo]) => {
@@ -221,9 +222,22 @@ export default class EditPointView extends AbstractStatefulView {
     });
   };
 
+  #offersClickHandler = (evt) => {
+    evt.preventDefault();
+
+    const newOffers = [];
+    const checkedOffers = document.querySelectorAll('.event__offer-checkbox:checked');
+
+    checkedOffers.forEach((offer) => newOffers.push(Number(offer.id.slice(length - 1))));
+
+    this.updateElement({
+      offers: newOffers,
+    });
+  };
+
   #priceClickHandler = (evt) => {
     evt.preventDefault();
-    this._setState({basePrice : evt.target.value})
+    this._setState({basePrice : evt.target.value});
   };
 
   #typeClickHandler = (evt) => {

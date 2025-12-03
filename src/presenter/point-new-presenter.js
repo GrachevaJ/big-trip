@@ -1,7 +1,6 @@
 import { render, RenderPosition, remove } from '../framework/render.js';
 import EditPointView from '../view/edit-point-view.js';
 import { UserAction, UpdateType, BLANK_POINT } from '../const.js';
-import { nanoid } from 'nanoid';
 
 
 export default class PointNewPresenter {
@@ -61,7 +60,7 @@ export default class PointNewPresenter {
     this.#changeData(
       UserAction.ADD_POINT,
       UpdateType.MINOR,
-      {id: nanoid(), ...point},
+      point,
     );
     this.destroy();
   };

@@ -7,7 +7,7 @@ import FilterPresenter from './presenter/filter-presenter.js';
 import PointsApiService from './points-api-service.js';
 import { render,RenderPosition } from './framework/render.js';
 
-const AUTHORIZATION = 'Basic sdflkj3lwkejfls89';
+const AUTHORIZATION = 'Basic sdflkj3lfgfgwkejfls89';
 const END_POINT = 'https://17.ecmascript.htmlacademy.pro/big-trip';
 
 const siteBodyElement = document.querySelector('.page-body');

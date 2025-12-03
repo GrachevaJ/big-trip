@@ -27,7 +27,7 @@ export default class PointDetailsModel extends Observable {
       this.#destinations = [];
       this.#offers = [];
     }
-    this._notify(UpdateType.INIT);
+    this._notify(UpdateType.MINOR);
   };
 }
 
