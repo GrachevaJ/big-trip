@@ -6,18 +6,19 @@ import flatpickr from 'flatpickr';
 
 import 'flatpickr/dist/flatpickr.min.css';
 
+const createDestination = (destinations, name) => {
+
+  const pointName = destinations.find((item) => item.name === name);
+  return pointName;
+};
+
 
 const createEditPointTemplate = (point, pointDetails) => {
   const { basePrice, dateFrom, dateTo, destination, offers, type} = point;
   const destinations = pointDetails.destinations;
   const offersByType = pointDetails.offers;
 
-  const createDestination = () => {
-
-    const pointName = destinations.find((item) => item.name === destination.name);
-    return pointName;
-  };
-  const Destination = createDestination();
+  const Destination = createDestination(destinations, destination.name);
 
   const createTypeList = () => `${offersByType.map((typeItem) => `<div class="event__type-item">
                           <input id="event-type-${typeItem.type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${typeItem.type}">
@@ -216,9 +217,11 @@ export default class EditPointView extends AbstractStatefulView {
   };
 
   #namePointClickHandler = (evt) => {
+    const details = createDestination(this.#pointDetails.destinations, evt.target.value);
+
     evt.preventDefault();
     this.updateElement({
-      destination: {name: evt.target.value}
+      destination: details,
     });
   };
 

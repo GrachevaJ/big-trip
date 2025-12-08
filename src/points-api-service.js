@@ -37,7 +37,6 @@ export default class PointsApiService extends ApiService {
   };
 
   addPoint = async (point) => {
-        console.log(this.#adaptToServer(point));
     const responce = await this._load({
       url: 'points',
       method: Method.POST,
@@ -64,8 +63,9 @@ export default class PointsApiService extends ApiService {
       'date_from': point.dateFrom instanceof Date ? point.dateFrom.toISOString() : null,
       'date_to': point.dateTo instanceof Date ? point.dateTo.toISOString() : null,
       'base_price': Number(point.basePrice),
-      'is_favorite': point.isFavorite,
-      'destinaition': point.destination.name,
+      'is_favorite': point.isFavorite || false,
+      'destinaition': point.destination,
+      'offers': point.offers || [],
     };
 
     delete adaptedPoint.dateFrom;
@@ -73,6 +73,7 @@ export default class PointsApiService extends ApiService {
     delete adaptedPoint.basePrice;
     delete adaptedPoint.isFavorite;
     delete adaptedPoint.destinaition;
+    // delete adaptedPoint.offers;
 
     return adaptedPoint;
   };
