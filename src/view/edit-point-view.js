@@ -2,7 +2,7 @@ import AbstractStatefulView from '..//framework/view/abstract-stateful-view.js';
 import { humanizeDateWithYear } from '../utils/date.js';
 
 import flatpickr from 'flatpickr';
-// import he from 'he';
+import he from 'he';
 
 import 'flatpickr/dist/flatpickr.min.css';
 
@@ -14,18 +14,18 @@ const createDestination = (destinations, name) => {
 
 
 const createEditPointTemplate = (point, pointDetails) => {
-  const { basePrice, dateFrom, dateTo, destination, offers, type} = point;
+  const { basePrice, dateFrom, dateTo, destination, offers, type, isDisabled, isDeleting, isSaving} = point;
   const destinations = pointDetails.destinations;
   const offersByType = pointDetails.offers;
 
   const Destination = createDestination(destinations, destination.name);
 
   const createTypeList = () => `${offersByType.map((typeItem) => `<div class="event__type-item">
-                          <input id="event-type-${typeItem.type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${typeItem.type}">
+                          <input id="event-type-${typeItem.type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${typeItem.type}" ${isDisabled ? 'disabled' : ''}>
                           <label class="event__type-label  event__type-label--${typeItem.type}" for="event-type-${typeItem.type}-1">${typeItem.type}</label>
                         </div>`).join('')}`;
 
-  const createDestinationList = () => `${destinations.map((elem) => `<option value="${elem.name}"></option>`)}`;
+  const createDestinationList = () => `${destinations.map((elem) => `<option value="${elem.name}">${elem.name}</option>`)}`;
 
   const createOffers = () => {
     const pointTypeOffer = offersByType.find((offer) => offer.type === type);
@@ -37,7 +37,7 @@ const createEditPointTemplate = (point, pointDetails) => {
     const checked = offers.includes(offer.id) ? 'checked' : '';
 
     return `<div class="event__offer-selector">
-                        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.title}-${offer.id}" type="checkbox" name="event-offer-${offer.title}" ${checked}>
+                        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.title}-${offer.id}" type="checkbox" name="event-offer-${offer.title}" ${checked} ${isDisabled ? 'disabled' : ''}>
                         <label class="event__offer-label" for="event-offer-${offer.title}-${offer.id}">
                           <span class="event__offer-title">${offer.title}</span>
                           &plus;&euro;&nbsp;
@@ -74,7 +74,7 @@ const createEditPointTemplate = (point, pointDetails) => {
                     <label class="event__label  event__type-output" for="event-destination-1">
                       ${type}
                     </label>
-                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.name === '' ? '' : Destination.name}" list="destination-list-1">
+                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.name === '' ? '' : Destination.name}" list="destination-list-1" ${isDisabled ? 'disabled' : ''}>
                     <datalist id="destination-list-1">
                       ${createDestinationList()}
                     </datalist>
@@ -82,10 +82,10 @@ const createEditPointTemplate = (point, pointDetails) => {
 
                   <div class="event__field-group  event__field-group--time">
                     <label class="visually-hidden" for="event-start-time-1">From</label>
-                    <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${dateFrom === null ? '' : humanizeDateWithYear(dateFrom)}">
+                    <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${dateFrom === null ? '' : humanizeDateWithYear(dateFrom)}" ${isDisabled ? 'disabled' : ''}>
                     &mdash;
                     <label class="visually-hidden" for="event-end-time-1">To</label>
-                    <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dateTo === null ? '' : humanizeDateWithYear(dateTo)}">
+                    <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dateTo === null ? '' : humanizeDateWithYear(dateTo)}" ${isDisabled ? 'disabled' : ''}>
                   </div>
 
                   <div class="event__field-group  event__field-group--price">
@@ -96,8 +96,8 @@ const createEditPointTemplate = (point, pointDetails) => {
                     <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${basePrice}">
                   </div>
 
-                  <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-                  <button class="event__reset-btn" type="reset">${basePrice === 0 ? 'Cancel' : 'Delete'}</button>
+                  <button class="event__save-btn  btn  btn--blue" type="submit" >${isSaving ? 'Saving...' : 'Save'}</button>
+                  <button class="event__reset-btn" type="reset">${isDeleting ? 'Deleting...' : 'Delete'}</button>
                 </header>
                 <section class="event__details">
                   ${type !== '' ? `<section class="event__section  event__section--offers">
@@ -176,10 +176,22 @@ export default class EditPointView extends AbstractStatefulView {
   };
 
   static parsePointToState = (point) => (
-    {...point}
+    {...point,
+      isDisabled: false,
+      isSaving: false,
+      isDeleting: false,
+    }
   );
 
-  static parseStateToPoint = (state) => ({...state});
+  static parseStateToPoint = (state) => {
+    const point = {...state};
+
+    delete point.isDisabled;
+    delete point.isDisabled;
+    delete point.isSaving;
+
+    return point;
+  };
 
   #setInnerHandlers = () => {
     this.element.querySelectorAll('.event__type-input').forEach((element) => {

@@ -107,7 +107,7 @@ export default class PointsPresenter {
       this.#renderNoPoints();
       return;
     }
-  this.#renderSort();
+    this.#renderSort();
     this.#renderPoints(points, pointDetails);
   };
 
@@ -126,12 +126,15 @@ export default class PointsPresenter {
   #handleViewAction = (actionType, updateType, update) => {
     switch (actionType) {
       case UserAction.UPDATE_POINT:
+        this.#pointPresenter.get(update.id).setSaving();
         this.#pointsModel.updatePoint(updateType, update);
         break;
       case UserAction.ADD_POINT:
+        this.#pointNewPresenter.setSaving();
         this.#pointsModel.addPoint(updateType, update);
         break;
       case UserAction.DELETE_POINT:
+        this.#pointPresenter.get(update.id).setDeleting();
         this.#pointsModel.deletePoint(updateType, update);
         break;
     }
