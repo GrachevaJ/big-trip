@@ -8,6 +8,12 @@ import { remove, render, RenderPosition} from '../framework/render.js';
 import { SortType, UpdateType, UserAction, FilterType} from '../const.js';
 import { sortDay, sortPrice, sortTime } from '../utils/date.js';
 import { filter } from '../utils/filter.js';
+import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
+
+const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
+};
 
 export default class PointsPresenter {
   #container = null;
@@ -25,6 +31,7 @@ export default class PointsPresenter {
   #currentSortType = SortType.DEFAULT;
   #filterType = FilterType.EVERYTHING;
   #isLoading = true;
+  #uiBlocker = new UiBlocker(TimeLimit.LOWER_LIMIT, TimeLimit.UPPER_LIMIT);
 
 
   constructor(container, pointsModel, filterModel, pointDetailsModel) {
@@ -124,6 +131,8 @@ export default class PointsPresenter {
   };
 
   #handleViewAction = async (actionType, updateType, update) => {
+    this.#uiBlocker.block();
+
     switch (actionType) {
       case UserAction.UPDATE_POINT:
         this.#pointPresenter.get(update.id).setSaving();
@@ -150,6 +159,8 @@ export default class PointsPresenter {
         }
         break;
     }
+
+    this.#uiBlocker.unblock();
   };
 
   #handleModelEvent = (updateType, data) => {
