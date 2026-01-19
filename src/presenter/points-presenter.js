@@ -9,6 +9,7 @@ import { SortType, UpdateType, UserAction, FilterType} from '../const.js';
 import { sortDay, sortPrice, sortTime } from '../utils/date.js';
 import { filter } from '../utils/filter.js';
 import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
+import HeaderPresenter from './header-presenter.js';
 
 const TimeLimit = {
   LOWER_LIMIT: 350,
@@ -22,6 +23,8 @@ export default class PointsPresenter {
   #filterModel = null;
   #pointNewPresenter = null;
   #pointDetailsModel = null;
+  #headerContainer = null;
+  #headerPresenter = null;
 
   #pointsListComponent = new PointsListView();
   #noPointsComponent = null;
@@ -34,13 +37,14 @@ export default class PointsPresenter {
   #uiBlocker = new UiBlocker(TimeLimit.LOWER_LIMIT, TimeLimit.UPPER_LIMIT);
 
 
-  constructor(container, pointsModel, filterModel, pointDetailsModel) {
+  constructor(container, pointsModel, filterModel, pointDetailsModel, headerContainer) {
     this.#container = container;
+    this.#headerContainer = headerContainer;
     this.#pointsModel = pointsModel;
     this.#filterModel = filterModel;
     this.#pointDetailsModel = pointDetailsModel;
     this.#pointNewPresenter = new PointNewPresenter(this.#pointsListComponent.element, this.#handleViewAction);
-
+    this.#headerPresenter = new HeaderPresenter(this.#headerContainer);
     this.#pointsModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
     this.#pointDetailsModel.addObserver(this.#handleModelEvent);
@@ -100,20 +104,23 @@ export default class PointsPresenter {
     this.#renderBoard();
   };
 
+
   #renderBoard = () => {
+    const points = this.points;
+    const pointDetails = this.pointDetails;
+
+
     render(this.#pointsListComponent, this.#container);
     if (this.#isLoading) {
       this.#renderLoading();
       return;
     }
 
-    const points = this.points;
-    const pointDetails = this.pointDetails;
-
     if (points.length === 0) {
       this.#renderNoPoints();
       return;
     }
+    this.#headerPresenter.init(points);
     this.#renderSort();
     this.#renderPoints(points, pointDetails);
   };
@@ -199,6 +206,7 @@ export default class PointsPresenter {
     this.#pointPresenter.forEach((presenter) => presenter.destroy());
     this.#pointPresenter.clear();
 
+    this.#headerPresenter.destroy();
     remove(this.#sortComponent);
     remove(this.#loadingComponent);
 
